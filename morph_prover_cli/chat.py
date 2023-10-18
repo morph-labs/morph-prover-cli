@@ -152,7 +152,10 @@ def main(model_path: Optional[str] = None, gpu: bool = False):
         user_message = input("user: ")
         chat_state.messages.append(Message(role="user", content=user_message))
         # model_response_stream = model.create_completion(chat_state.compile_conversation(), max_tokens=1024, temperature=0.25, top_p=0.9, top_k=64, stream=True)
-        model_response_stream = model.create_chat_completion(messages=[asdict(m) for m in chat_state.messages], max_tokens=1024, temperature-0.25, top_p=0.9, top_k=64, stream=True)
+        model_response_stream = model.create_chat_completion(
+            messages=[asdict(m) for m in chat_state.messages],
+            max_tokens=1024,
+            temperature=0.25, top_p=0.9, top_k=64, stream=True)
         print("morph-prover-v0-7b: ", end="")
         resp = ""
         for chunk in model_response_stream:
