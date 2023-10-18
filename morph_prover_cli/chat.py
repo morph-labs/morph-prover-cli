@@ -6,7 +6,7 @@ import rich
 import rich.console
 from alive_progress import alive_bar
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 import fire
 import os
 import requests
@@ -14,6 +14,7 @@ from tqdm import tqdm
 from llama_cpp.llama import Llama
 import enum
 from typing import List, Optional
+import transformers
 
 def morph_splash():
     _splash = """
@@ -150,12 +151,13 @@ def main(model_path: Optional[str] = None, gpu: bool = False):
     while True:
         user_message = input("user: ")
         chat_state.messages.append(Message(role="user", content=user_message))
-        model_response_stream = model.create_completion(chat_state.compile_conversation(), max_tokens=1024, temperature=0.25, top_p=0.9, top_k=64, stream=True)
+        # model_response_stream = model.create_completion(chat_state.compile_conversation(), max_tokens=1024, temperature=0.25, top_p=0.9, top_k=64, stream=True)
+        model_response_stream = model.create_chat_completion(messages=[asdict(m) for m in chat_state.messages], max_tokens=1024, temperature-0.25, top_p=0.9, top_k=64, stream=True)
         print("morph-prover-v0-7b: ", end="")
         resp = ""
         for chunk in model_response_stream:
             try:
-                next_text_chunk = chunk["choices"][0]["text"]
+                next_text_chunk = chunk["choices"][0]["content"]
                 print(next_text_chunk, end="")
                 resp += next_text_chunk
                 bar()
