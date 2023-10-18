@@ -96,10 +96,10 @@ class ChatState:
     def compile_conversation(self):
         return format_llama_conversation([m.content for m in self.messages] + [""])
 
-def _ensure_model():
+def _ensure_model(model_path: Optional[str] = None):
     model_dir = os.path.expandvars("$HOME/.morph")
     model_file = "gguf-model-Q8_0.gguf"
-    model_path = os.path.join(model_dir, model_file)
+    model_path = model_path or os.path.join(model_dir, model_file)
 
     if not os.path.exists(model_path):
         os.makedirs(model_dir, exist_ok=True)
@@ -124,7 +124,7 @@ def _ensure_model():
     return model_path
 
 
-def main(gpu: bool = False):
+def main(model_path: Optional[str] = None, gpu: bool = False):
     console = rich.console.Console(); print = console.print
     
     morph_splash()
@@ -136,7 +136,7 @@ def main(gpu: bool = False):
     print("loading model")
     with alive_bar(title='Loading model...', spinner='bubbles') as bar:
         model = Llama(
-            model_path=_ensure_model(),
+            model_path=_ensure_model(model_path),
             n_ctx=4096,
             verbose=False,
             **extra_kwargs
