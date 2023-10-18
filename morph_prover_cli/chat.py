@@ -159,13 +159,14 @@ def main(model_path: Optional[str] = None, gpu: bool = False):
         print("morph-prover-v0-7b: ", end="")
         resp = ""
         for chunk in model_response_stream:
+            # print(f"{chunk=}")
             try:
-                next_text_chunk = chunk["choices"][0]["content"]
+                next_text_chunk = chunk["choices"][0]["delta"]["content"]
                 print(next_text_chunk, end="")
                 resp += next_text_chunk
                 bar()
             except Exception as e:
-                print(f"caught {e=}")
+                # print(f"caught {e=}")
                 continue
         print()
         chat_state.messages.append(Message(role="assistant", content=resp))
